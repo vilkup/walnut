@@ -6,5 +6,12 @@ export default {
       certPath: '<CERT-PATH>',
       chainPath: '<CHAIN-PATH>'
     }
+  },
+  db: {
+    user: '<USER>',
+    host: '<HOST>',
+    database: '<DATABASE>',
+    password: '<PASSWORD>',
+    port: 5432
   }
 };
