@@ -1,0 +1,20 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Build directories
+dist/
+
+# Configs
+src/config/configs/*
+!src/config/configs/default.ts
+
+# macOS metadata files
+.DS_Store
+
+# IDE
+.idea
