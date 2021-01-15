@@ -1,11 +1,12 @@
-import cors from '@koa/cors';
+import https from 'https';
 import cluster from 'cluster';
 import fs from 'fs';
-import https from 'https';
+import { cpus } from 'os';
 
 import Koa from 'koa';
+import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
-import { cpus } from 'os';
+import logger from 'koa-logger';
 import applyAPIMiddleware from '../api';
 import config from '../config/';
 
@@ -22,6 +23,7 @@ const server = new Koa();
  * Passing to our server instance middlewares
  */
 server
+  .use(logger())
   .use(cors())
   .use(bodyParser());
 
