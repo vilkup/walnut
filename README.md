@@ -14,7 +14,7 @@ This is a demo-app. <br>
 Of course, in real-world we will add authentication for the API and we will use powerfull logging 💪
 
 ### Running app
-To run an app in dev environment you should create file `src/config/configs/developent.ts` and fill it with your data. <br>
+To run an app in dev environment you should create file `src/config/configs/developent.ts` and fill it with your data (example in `default.ts`). <br>
 
 To initialize test data you should run `init/init.sql`. <br>
 Run `npm i` to install project dependencies. <br>
