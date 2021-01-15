@@ -10,7 +10,7 @@ https://documenter.getpostman.com/view/5449542/TVzVgusQ <br>
 - PostgreSQL 🐘
 
 ### Disclaimer
-This is a demo-app. <br>
+This is a demo app. <br>
 Of course, in real-world we will add authentication for the API and we will use powerfull logging 💪
 
 ### Running app
