@@ -1,7 +1,7 @@
 import Client from '../entities/client';
 import db from '../../db';
 
-export default class ClientsService {
+class ClientService {
   /**
    * Converts database row to Client object
    * @param row
@@ -19,10 +19,11 @@ export default class ClientsService {
   async getAllClients(): Promise<Client[]> {
     const { rows } = await db.query(`
         SELECT *
-        FROM clients;
+        FROM clients
+        ORDER BY id;
     `);
 
-    return rows.map(ClientsService.toClientObject);
+    return rows.map(ClientService.toClientObject);
   }
 
   /**
@@ -37,7 +38,7 @@ export default class ClientsService {
       WHERE id = ${id};
     `);
 
-    return rows.length ? ClientsService.toClientObject(rows[0]) : null;
+    return rows.length ? ClientService.toClientObject(rows[0]) : null;
   }
 
   /**
@@ -52,16 +53,16 @@ export default class ClientsService {
       RETURNING *;
     `);
 
-    return ClientsService.toClientObject(rows[0]);
+    return ClientService.toClientObject(rows[0]);
   }
 
   /**
    * Updates client with specified id in database
    * @param {number} id
-   * @param {Partial<Client>} newData
+   * @param {IUpdateClient} newData
    * @return {Promise<Client | null>}
    */
-  async updateClientById(id: number, newData: Partial<Client>): Promise<Client | null> {
+  async updateClientById(id: number, newData: IUpdateClient): Promise<Client | null> {
     const updateString = Object.entries(newData).reduce((acc, [field, value]) => {
       let fieldAlias = field;
       let typedValue = `'${value}'`;
@@ -92,20 +93,23 @@ export default class ClientsService {
       RETURNING *;
     `);
 
-    return rows.length ? ClientsService.toClientObject(rows[0]) : null;
+    return rows.length ? ClientService.toClientObject(rows[0]) : null;
   }
 
   /**
    * Deletes client with specified id from database
    * @param {number} id
-   * @return {Promise<void>}
+   * @return {Promise<Client | null>}
    */
-  async deleteClientById(id: number): Promise<void> {
-    await db.query(`
+  async deleteClientById(id: number): Promise<Client | null> {
+    const { rows } = await db.query(`
       DELETE
       FROM clients
-      WHERE id = ${id};
+      WHERE id = ${id}
+      RETURNING *;
     `);
+
+    return rows.length ? ClientService.toClientObject(rows[0]) : null;
   }
 }
 
@@ -114,3 +118,11 @@ interface ICreateClient {
   lastName: string;
   phoneNumber: string;
 }
+
+interface IUpdateClient {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+}
+
+export default new ClientService();

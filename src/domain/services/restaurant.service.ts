@@ -2,7 +2,7 @@ import Restaurant from '../entities/restaurant';
 import { ILocation } from '../types/location';
 import db from '../../db';
 
-export default class RestaurantsService {
+class RestaurantService {
   /**
    * Converts database row to Restaurant object
    * @param row
@@ -28,10 +28,11 @@ export default class RestaurantsService {
   async getAllRestaurants(): Promise<Restaurant[]> {
     const { rows } = await db.query(`
         SELECT *
-        FROM restaurants;
+        FROM restaurants
+        ORDER BY id;
     `);
 
-    return rows.map(RestaurantsService.toRestaurantObject);
+    return rows.map(RestaurantService.toRestaurantObject);
   }
 
   /**
@@ -46,7 +47,7 @@ export default class RestaurantsService {
       WHERE id = ${id};
     `);
 
-    return rows.length ? RestaurantsService.toRestaurantObject(rows[0]) : null;
+    return rows.length ? RestaurantService.toRestaurantObject(rows[0]) : null;
   }
 
   /**
@@ -61,18 +62,27 @@ export default class RestaurantsService {
       RETURNING *;
     `);
 
-    return RestaurantsService.toRestaurantObject(rows[0]);
+    return RestaurantService.toRestaurantObject(rows[0]);
   }
 
   /**
    * Updates restaurant with specified id in database
    * @param {number} id
-   * @param {Partial<Restaurant>} newData
+   * @param {IUpdateRestaurant} newData
    * @return {Promise<Restaurant | null>}
    */
-  async updateRestaurantById(id: number, newData: Partial<Restaurant>): Promise<Restaurant | null> {
+  async updateRestaurantById(id: number, newData: IUpdateRestaurant): Promise<Restaurant | null> {
     const updateString = Object.entries(newData).reduce((acc, [field, value]) => {
-      return acc + `"${field}" = ${value}`;
+      let fieldAlias = field;
+      let typedValue = `'${value}'`;
+
+      switch (field) {
+        case 'geolocation':
+          typedValue = `point(${value.latitude}, ${value.longitude})`;
+          break;
+      }
+
+      return acc + `"${fieldAlias}" = ${typedValue}`;
     }, '');
 
     if (updateString.length === 0) {
@@ -86,20 +96,23 @@ export default class RestaurantsService {
       RETURNING *;
     `);
 
-    return rows.length ? RestaurantsService.toRestaurantObject(rows[0]) : null;
+    return rows.length ? RestaurantService.toRestaurantObject(rows[0]) : null;
   }
 
   /**
    * Deletes restaurant with specified id from database
    * @param {number} id
-   * @return {Promise<void>}
+   * @return {Promise<Restaurant | null>}
    */
-  async deleteRestaurantById(id: number): Promise<void> {
-    await db.query(`
+  async deleteRestaurantById(id: number): Promise<Restaurant | null> {
+    const { rows } = await db.query(`
       DELETE
       FROM restaurants
-      WHERE id = ${id};
+      WHERE id = ${id}
+      RETURNING *;
     `);
+
+    return rows.length ? RestaurantService.toRestaurantObject(rows[0]) : null;
   }
 }
 
@@ -108,3 +121,11 @@ interface ICreateRestaurant {
   address: string;
   geolocation: ILocation;
 }
+
+interface IUpdateRestaurant {
+  name: string;
+  address: string;
+  geolocation: ILocation;
+}
+
+export default new RestaurantService();

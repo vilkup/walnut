@@ -4,3 +4,10 @@ export interface ICourier {
   lastName: string;
   phoneNumber: string;
 }
+
+export interface ICourierStats {
+  topDeliveryAddress: { address: string, ordersCount: number } | null;
+  totalOrdersCompleted: number;
+  averageOrderTime: number; // in minutes
+  totalOrdersPrice: number;
+}

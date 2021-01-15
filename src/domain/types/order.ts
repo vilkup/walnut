@@ -18,5 +18,5 @@ export enum OrderStatus {
   WAITING,
   COOKING,
   DELIVERING,
-  FINISHED
+  COMPLETED
 }

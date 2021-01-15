@@ -3,7 +3,7 @@ import { OrderStatus } from '../types/order';
 import { ILocation } from '../types/location';
 import db from '../../db';
 
-export default class OrdersService {
+class OrderService {
   /**
    * Converts database row to Order object
    * @param row
@@ -22,7 +22,7 @@ export default class OrdersService {
         longitude: row.delivery_geolocation.y
       },
       row.text,
-      row.price,
+      +row.price,
       row.status,
       row.start_date,
       row.end_date
@@ -36,10 +36,11 @@ export default class OrdersService {
   async getAllOrders(): Promise<Order[]> {
     const { rows } = await db.query(`
         SELECT *
-        FROM orders;
+        FROM orders
+        ORDER BY id;
     `);
 
-    return rows.map(OrdersService.toOrderObject);
+    return rows.map(OrderService.toOrderObject);
   }
 
   /**
@@ -54,7 +55,7 @@ export default class OrdersService {
       WHERE id = ${id};
     `);
 
-    return rows.length ? OrdersService.toOrderObject(rows[0]) : null;
+    return rows.length ? OrderService.toOrderObject(rows[0]) : null;
   }
 
   /**
@@ -80,7 +81,7 @@ export default class OrdersService {
       RETURNING *;
     `);
 
-    return OrdersService.toOrderObject(rows[0]);
+    return OrderService.toOrderObject(rows[0]);
   }
 
   /**
@@ -107,8 +108,8 @@ export default class OrdersService {
       throw new Error('No data provided for updating order');
     }
 
-    // If status changed to FINISHED, set order's end date
-    if (newData.status === OrderStatus.FINISHED) {
+    // If status changed to COMPLETED, set order's end date
+    if (newData.status && +newData.status === OrderStatus.COMPLETED) {
       updateString += `, "end_date" = '${new Date().toISOString()}'`;
     }
 
@@ -119,7 +120,7 @@ export default class OrdersService {
       RETURNING *;
     `);
 
-    return rows.length ? OrdersService.toOrderObject(rows[0]) : null;
+    return rows.length ? OrderService.toOrderObject(rows[0]) : null;
   }
 }
 
@@ -137,3 +138,5 @@ interface IUpdateOrder {
   courierId?: number;
   status?: OrderStatus;
 }
+
+export default new OrderService();
