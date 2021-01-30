@@ -22,7 +22,7 @@ class RestaurantService {
   }
 
   /**
-   * Returns all restaurants from database
+   * Returns all orders from database
    * @return {Promise<Restaurant[]>}
    */
   async getAllRestaurants(): Promise<Restaurant[]> {

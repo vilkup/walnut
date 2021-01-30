@@ -30,7 +30,7 @@ class OrderService {
   }
 
   /**
-   * Returns all orders from database
+   * Returns all restaurants from database
    * @return {Promise<Order[]>}
    */
   async getAllOrders(): Promise<Order[]> {

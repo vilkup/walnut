@@ -1,4 +1,4 @@
-import * as controller from './restaurant.controller';
+import * as controller from './order.controller';
 
 export default (Router) => {
   const router = new Router({
@@ -9,8 +9,7 @@ export default (Router) => {
     .get('/', controller.getAll)
     .get('/:id', controller.getOne)
     .post('/', controller.createOne)
-    .put('/:id', controller.updateOne)
-    .delete('/:id', controller.deleteOne);
+    .put('/:id', controller.updateOne);
 
   return router;
 };

@@ -1,1 +1,1 @@
-export { default } from './restaurant.routes';
+export { default } from './order.routes';
