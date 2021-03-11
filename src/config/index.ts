@@ -1,18 +1,15 @@
-import developmentConfig from './configs/development';
-import productionConfig from './configs/production';
-
 let config;
 
 switch (process.env.NODE_ENV) {
   case 'prod':
   case 'production':
-    config = productionConfig;
+    config = require('./configs/production').default;
     break;
 
   case 'dev':
   case 'development':
   default:
-    config = developmentConfig;
+    config = require('./configs/development').default;
     break;
 }
 
